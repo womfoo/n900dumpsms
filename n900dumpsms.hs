@@ -4,10 +4,12 @@ import Control.Applicative
 import Data.Map                       hiding (map)
 import Data.Maybe
 import Data.Text                      hiding (length)
+import Data.Time
 import Data.Time.Clock.POSIX
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
 import Prelude                        hiding (unlines, writeFile)
+import System.Locale
 import Text.Hamlet.XML
 import Text.XML
 
@@ -73,4 +75,4 @@ smslist2xml smslist = Document prologue root []
         x1000 x = pack $ if x == 0 then "0" else show x ++ "000"
         type' sms = case outgoing sms of Just True -> "2" -- 1 received, 2 sent, 3 drafts?
                                          _         -> "1"
-        readableDate = pack . show . posixSecondsToUTCTime . realToFrac
+        readableDate = pack . formatTime defaultTimeLocale "%c" . posixSecondsToUTCTime . realToFrac
