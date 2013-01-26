@@ -55,7 +55,7 @@ smslist2xml smslist = Document prologue root []
         nodes = [xml|$forall sms <- smslist
                            <sms protocol="0"
                                 address=#{justOrBlank (remote_uid sms)}
-                                   date=#{x1000maybe (end_time sms)}
+                                   date=#{x1000 (start_time sms)}
                                    type=#{type' sms}
                                 subject="null"
                                    body=#{justOrBlank (free_text sms)}
@@ -65,12 +65,12 @@ smslist2xml smslist = Document prologue root []
                                    read="1"
                                  status="-1"
                                  locked="0"
-                              date_sent=#{x1000 (start_time sms)}
+                              date_sent=#{x1000maybe (end_time sms)}
                           readable_date=#{readableDate (start_time sms)}
                            contact_name=#{justOrBlank (remote_name sms)} > |]
         justOrBlank = fromMaybe ""
         x1000maybe = maybe "0" x1000
-        x1000 x = pack $ show x ++ "000"
+        x1000 x = pack $ if x == 0 then "0" else show x ++ "000"
         type' sms = case outgoing sms of Just True -> "2" -- 1 received, 2 sent, 3 drafts?
                                          _         -> "1"
         readableDate = pack . show . posixSecondsToUTCTime . realToFrac
