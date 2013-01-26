@@ -9,6 +9,7 @@ import Data.Time.Clock.POSIX
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
 import Prelude                        hiding (unlines, writeFile)
+import System.Environment
 import System.Locale
 import Text.Hamlet.XML
 import Text.XML
@@ -44,7 +45,8 @@ querytext = Query $ unlines
   ,"ORDER  BY start_time"]
 
 main = do
-  conn <- open "/tmp/el-v1.db"
+  file:[] <- getArgs
+  conn <- open file
   smslist <- query_ conn querytext :: IO [SMS]
   writeFile def {rsPretty = False} "output.xml" $ smslist2xml smslist
   close conn
